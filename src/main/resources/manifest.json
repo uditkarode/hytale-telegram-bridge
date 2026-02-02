@@ -1,0 +1,14 @@
+{
+  "Group": "bridge",
+  "Name": "hytale-telegram-bridge",
+  "Version": "1.0.0",
+  "Description": "Telegram bridge",
+  "Main": "bridge.BridgePlugin",
+  "Authors": [{ "Name": "coye" }],
+  "IncludesAssetPack": false,
+  "Dependencies": {},
+  "OptionalDependencies": {},
+  "LoadBefore": {},
+  "DisabledByDefault": false
+}
+
