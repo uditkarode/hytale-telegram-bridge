@@ -32,6 +32,9 @@ public final class BridgePlugin extends JavaPlugin {
         getEventRegistry().registerGlobal(PlayerReadyEvent.class, this::onPlayerJoin);
         // PlayerDisconnectEvent is IBaseEvent<Void>, so use register
         getEventRegistry().register(PlayerDisconnectEvent.class, this::onPlayerDisconnect);
+
+        // Register Death System
+        this.getEntityStoreRegistry().registerSystem(new PlayerDeathSystem(this));
     }
 
     @Override
@@ -73,17 +76,15 @@ public final class BridgePlugin extends JavaPlugin {
 
     private void onPlayerJoin(PlayerReadyEvent event) {
         String username = event.getPlayer().getPlayerRef().getUsername();
-        String message = username + " has joined the server.";
-        forwardToTelegram(message);
+        forwardToTelegram(username + " has joined the server.");
     }
 
     private void onPlayerDisconnect(PlayerDisconnectEvent event) {
         String username = event.getPlayerRef().getUsername();
-        String message = username + " has left the server.";
-        forwardToTelegram(message);
+        forwardToTelegram(username + " has left the server.");
     }
 
-    private void forwardToTelegram(String message) {
+    public void forwardToTelegram(String message) {
         if (telegramBot != null) {
             telegramBot.sendMessage(message);
         }
