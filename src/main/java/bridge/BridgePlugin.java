@@ -10,7 +10,6 @@ import com.hypixel.hytale.server.core.plugin.JavaPlugin;
 import com.hypixel.hytale.server.core.plugin.JavaPluginInit;
 import com.hypixel.hytale.server.core.util.Config;
 import com.hypixel.hytale.server.core.universe.Universe;
-import com.hypixel.hytale.server.core.util.NotificationUtil;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 
 import javax.annotation.Nonnull;
@@ -18,7 +17,7 @@ import java.util.logging.Level;
 
 public final class BridgePlugin extends JavaPlugin {
     private final Config<BridgeConfig> config = this.withConfig("Bridge", BridgeConfig.CODEC);
-    private TelegramBot telegramBot;
+    private TelegramBot telegramBot = TelegramBot.DISABLED;
     private TelegramBotsLongPollingApplication botsApplication;
 
     public BridgePlugin(@Nonnull JavaPluginInit init) {
@@ -27,14 +26,10 @@ public final class BridgePlugin extends JavaPlugin {
 
     @Override
     protected void setup() {
-        // PlayerChatEvent and PlayerReadyEvent are keyed by String, so use registerGlobal
         getEventRegistry().registerGlobal(PlayerChatEvent.class, this::onPlayerChat);
         getEventRegistry().registerGlobal(PlayerReadyEvent.class, this::onPlayerJoin);
-        // PlayerDisconnectEvent is IBaseEvent<Void>, so use register
         getEventRegistry().register(PlayerDisconnectEvent.class, this::onPlayerDisconnect);
-
-        // Register Death System
-        this.getEntityStoreRegistry().registerSystem(new PlayerDeathSystem(this));
+        getEntityStoreRegistry().registerSystem(new PlayerDeathSystem(this));
     }
 
     @Override
@@ -58,36 +53,33 @@ public final class BridgePlugin extends JavaPlugin {
 
     @Override
     protected void shutdown() {
-        if (botsApplication != null) {
-            try {
-                botsApplication.close();
-                getLogger().at(Level.INFO).log("Telegram bridge shut down.");
-            } catch (Exception e) {
-                getLogger().at(Level.SEVERE).log("Error shutting down Telegram bridge: " + e.getMessage());
-            }
+        if (botsApplication == null) return;
+
+        try {
+            botsApplication.close();
+            getLogger().at(Level.INFO).log("Telegram bridge shut down.");
+        } catch (Exception e) {
+            getLogger().at(Level.SEVERE).log("Error shutting down Telegram bridge: " + e.getMessage());
         }
     }
 
     private void onPlayerChat(PlayerChatEvent event) {
         String username = event.getSender().getUsername();
-        String message = username + ": " + event.getContent();
-        forwardToTelegram(message);
+        telegramBot.sendMessage(username + ": " + event.getContent());
     }
 
     private void onPlayerJoin(PlayerReadyEvent event) {
         String username = event.getPlayer().getPlayerRef().getUsername();
-        forwardToTelegram(username + " has joined the server.");
+        telegramBot.sendMessage(username + " has joined the server.");
     }
 
     private void onPlayerDisconnect(PlayerDisconnectEvent event) {
         String username = event.getPlayerRef().getUsername();
-        forwardToTelegram(username + " has left the server.");
+        telegramBot.sendMessage(username + " has left the server.");
     }
 
-    public void forwardToTelegram(String message) {
-        if (telegramBot != null) {
-            telegramBot.sendMessage(message);
-        }
+    public void sendToTelegram(String message) {
+        telegramBot.sendMessage(message);
     }
 
     private void broadcastToHytale(String sender, String text) {
@@ -95,7 +87,6 @@ public final class BridgePlugin extends JavaPlugin {
             Message.raw("[telegram] ").color(Color.BLUE).bold(true),
             Message.raw(sender + ": " + text).color(Color.WHITE).bold(false)
         );
-        
         Universe.get().sendMessage(message);
         getLogger().at(Level.INFO).log("Broadcasted Telegram message to Hytale: " + text);
     }

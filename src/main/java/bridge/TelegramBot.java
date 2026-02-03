@@ -11,9 +11,17 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import java.util.function.BiConsumer;
 
 public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
+    public static final TelegramBot DISABLED = new TelegramBot();
+
     private final TelegramClient telegramClient;
     private final String chatId;
     private final BiConsumer<String, String> hytaleBroadcaster;
+
+    private TelegramBot() {
+        this.telegramClient = null;
+        this.chatId = null;
+        this.hytaleBroadcaster = null;
+    }
 
     public TelegramBot(String token, String chatId, BiConsumer<String, String> hytaleBroadcaster) {
         this.telegramClient = new OkHttpTelegramClient(token);
@@ -23,19 +31,19 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
 
     @Override
     public void consume(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            Message message = update.getMessage();
-            String receivedChatId = String.valueOf(message.getChatId());
+        if (!update.hasMessage() || !update.getMessage().hasText()) return;
+        
+        Message message = update.getMessage();
+        if (!String.valueOf(message.getChatId()).equals(chatId)) return;
 
-            if (receivedChatId.equals(chatId)) {
-                String sender = message.getFrom().getFirstName();
-                String text = message.getText();
-                hytaleBroadcaster.accept(sender, text);
-            }
-        }
+        String sender = message.getFrom().getFirstName();
+        String text = message.getText();
+        hytaleBroadcaster.accept(sender, text);
     }
 
     public void sendMessage(String text) {
+        if (telegramClient == null) return;
+
         SendMessage sendMessage = SendMessage.builder()
                 .chatId(chatId)
                 .text(text)
@@ -43,7 +51,6 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
         try {
             telegramClient.execute(sendMessage);
         } catch (TelegramApiException e) {
-            // Log error but don't rethrow to avoid crashing the plugin
             System.err.println("Failed to send message to Telegram: " + e.getMessage());
         }
     }
