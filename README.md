@@ -17,11 +17,11 @@ A simple Hytale server plugin that bridges chat, join/leave events, and deaths t
    ```bash
    mvn clean package
    ```
-4. Find the built JAR in `target/hytale-telegram-bridge-1.0.0.jar`.
+4. Find the built JAR in `target/hytale-telegram-bridge-1.0.1.jar`.
 5. Follow the **Configuration** section below.
 
 ## Configuration
-You must create `mods/bridge_hytale-telegram-bridge/Bridge.json`:
+The plugin auto-creates `mods/bridge_hytale-telegram-bridge/Bridge.json` on first run. Fill in `TelegramToken` and `ChatId`.
 
 ```json
 {
@@ -29,3 +29,11 @@ You must create `mods/bridge_hytale-telegram-bridge/Bridge.json`:
   "ChatId": "YOUR_CHAT_ID_HERE"
 }
 ```
+
+Telegram commands:
+1. `/experimental_server_restart` stops the server from Telegram.
+2. `/players` replies with the current player list.
+3. `/tgreply <id>` opens the reply context page (used by the in-game `[reply]` link).
+
+Reply notes:
+- When a Telegram message is a reply, in-game chat adds a `[reply]` tag that opens the original message context.

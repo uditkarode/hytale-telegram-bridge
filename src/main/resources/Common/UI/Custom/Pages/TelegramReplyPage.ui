@@ -1,0 +1,23 @@
+Group {
+  LayoutMode: Top;
+  Background: (Color: #2a2a2a);
+  Anchor: (Width: 800, Height: 500);
+  Padding: (Full: 0);
+  Label #Title {
+    Anchor: (Horizontal: 0);
+    FlexWeight: 0;
+    Padding: (Top: 8, Bottom: 8);
+    Text: "Reply";
+    Style: (TextColor: #ffffff, FontSize: 24, HorizontalAlignment: Center);
+  }
+  Label #ReplyTo {
+    Padding: (Left: 16, Top: 16);
+    Text: "(Reply to: unknown) ";
+    Style: (TextColor: #9fb1c8);
+  }
+  Label #ReplyFrom {
+    Padding: (Left: 16, Top: 8);
+    Text: "(Reply from: unknown) ";
+    Style: (TextColor: #ffffff);
+  }
+}
