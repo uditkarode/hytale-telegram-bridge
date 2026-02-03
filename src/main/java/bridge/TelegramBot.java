@@ -1,5 +1,7 @@
 package bridge;
 
+import com.hypixel.hytale.server.core.command.system.CommandManager;
+import com.hypixel.hytale.server.core.console.ConsoleSender;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -36,8 +38,16 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
         Message message = update.getMessage();
         if (!String.valueOf(message.getChatId()).equals(chatId)) return;
 
-        String sender = message.getFrom().getFirstName();
         String text = message.getText();
+
+        if (text.equals("/experimental_server_restart")) {
+            sendMessage("Restarting server...");
+            sendMessage("A message will be sent when the server is ready again...");
+            CommandManager.get().handleCommand(ConsoleSender.INSTANCE, "stop");
+            return;
+        }
+
+        String sender = message.getFrom().getFirstName();
         hytaleBroadcaster.accept(sender, text);
     }
 

@@ -46,6 +46,7 @@ public final class BridgePlugin extends JavaPlugin {
         try {
             botsApplication.registerBot(cfg.getTelegramToken(), telegramBot);
             getLogger().at(Level.INFO).log("Telegram bridge started.");
+            telegramBot.sendMessage("Server has been restarted.");
         } catch (Exception e) {
             getLogger().at(Level.SEVERE).log("Failed to start Telegram bridge: " + e.getMessage());
         }
