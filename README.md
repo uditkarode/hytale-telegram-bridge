@@ -6,13 +6,13 @@ A simple Hytale server plugin that bridges chat, join/leave events, and deaths t
 
 ### Method 1: Download Release
 1. Go to the [Releases](https://github.com/uditkarode/hytale-telegram-bridge/releases) page.
-2. Download the latest `hytale-telegram-bridge-1.0.0.jar`.
+2. Download the latest `hytale-telegram-bridge-*.*.*.jar`.
 3. Drop it into your Hytale server's `mods` folder.
 4. Follow the **Configuration** section below.
 
 ### Method 2: Build from Source
 1. Clone the repository.
-2. Ensure you have the Hytale Server JAR named `HytaleServer.jar` in the root directory.
+2. Place the Hytale Server JAR (named `HytaleServer.jar`) in the repository root.
 3. Run:
    ```bash
    mvn clean package
@@ -21,7 +21,7 @@ A simple Hytale server plugin that bridges chat, join/leave events, and deaths t
 5. Follow the **Configuration** section below.
 
 ## Configuration
-You must create `mods/bridge_hytale-telegram-bridge/Bridge.json` with this structure:
+You must create `mods/bridge_hytale-telegram-bridge/Bridge.json`:
 
 ```json
 {
