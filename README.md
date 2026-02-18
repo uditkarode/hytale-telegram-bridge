@@ -31,6 +31,6 @@ The plugin auto-creates `mods/bridge_hytale-telegram-bridge/Bridge.json` on firs
 ```
 
 Telegram commands:
-1. `/experimental_server_restart` stops the server from Telegram.
+1. `/experimental_server_restart` **stops** the server from Telegram.  To have it restart you should be running with `Restart=always` in systemd or similar.
 2. `/players` replies with the current player list.
 3. `/tgreply <id>` opens the reply context page (used by the in-game `[reply]` link).
