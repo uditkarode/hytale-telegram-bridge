@@ -4,13 +4,16 @@ import com.hypixel.hytale.server.core.command.system.CommandManager;
 import com.hypixel.hytale.server.core.console.ConsoleSender;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -35,6 +38,21 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
         this.chatId = chatId;
         this.messageHandler = messageHandler;
         this.restartAllowedIds = parseAllowedIds(restartAllowedIds);
+        registerCommands();
+    }
+
+    private void registerCommands() {
+        SetMyCommands setMyCommands = SetMyCommands.builder()
+                .commands(List.of(
+                        BotCommand.builder().command("players").description("Show online players").build(),
+                        BotCommand.builder().command("server_restart").description("Restart the server").build()
+                ))
+                .build();
+        try {
+            telegramClient.execute(setMyCommands);
+        } catch (TelegramApiException e) {
+            System.err.println("Failed to register bot commands: " + e.getMessage());
+        }
     }
 
     @Override
