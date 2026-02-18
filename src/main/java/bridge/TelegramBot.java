@@ -11,7 +11,9 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
+import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
     public static final TelegramBot DISABLED = new TelegramBot();
@@ -19,17 +21,20 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
     private final TelegramClient telegramClient;
     private final String chatId;
     private final Consumer<TelegramMessage> messageHandler;
+    private final Set<Long> restartAllowedIds;
 
     private TelegramBot() {
         this.telegramClient = null;
         this.chatId = null;
         this.messageHandler = null;
+        this.restartAllowedIds = Set.of();
     }
 
-    public TelegramBot(String token, String chatId, Consumer<TelegramMessage> messageHandler) {
+    public TelegramBot(String token, String chatId, String restartAllowedIds, Consumer<TelegramMessage> messageHandler) {
         this.telegramClient = new OkHttpTelegramClient(token);
         this.chatId = chatId;
         this.messageHandler = messageHandler;
+        this.restartAllowedIds = parseAllowedIds(restartAllowedIds);
     }
 
     @Override
@@ -45,6 +50,13 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
         if (chatId == null || !String.valueOf(message.getChatId()).equals(chatId)) return;
 
         if (type == TelegramMessageType.TEXT && stripBotSuffix(text).equals("/experimental_server_restart")) {
+            if (!restartAllowedIds.isEmpty()) {
+                User sender = message.getFrom();
+                if (sender == null || !restartAllowedIds.contains(sender.getId())) {
+                    sendMessage("You are not allowed to use this command.");
+                    return;
+                }
+            }
             sendMessage("Restarting server...");
             sendMessage("A message will be sent when the server is ready again...");
             CommandManager.get().handleCommand(ConsoleSender.INSTANCE, "stop");
@@ -145,6 +157,15 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
     private static String stripBotSuffix(String text) {
         int at = text.indexOf('@');
         return at > 0 ? text.substring(0, at) : text;
+    }
+
+    private static Set<Long> parseAllowedIds(String raw) {
+        if (raw == null || raw.trim().isEmpty()) return Set.of();
+        return java.util.Arrays.stream(raw.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(Long::valueOf)
+                .collect(Collectors.toSet());
     }
 
     private static String formatPreview(TelegramMessageType type, String text) {

@@ -10,10 +10,13 @@ public class BridgeConfig {
             .add()
             .append(new KeyedCodec<>("ChatId", Codec.STRING), (c, v) -> c.chatId = v, c -> c.chatId)
             .add()
+            .append(new KeyedCodec<>("RestartAllowedIds", Codec.STRING), (c, v) -> c.restartAllowedIds = v, c -> c.restartAllowedIds)
+            .add()
             .build();
 
     private String telegramToken = "";
     private String chatId = "";
+    private String restartAllowedIds = "";
 
     public String getTelegramToken() {
         return telegramToken;
@@ -21,5 +24,9 @@ public class BridgeConfig {
 
     public String getChatId() {
         return chatId;
+    }
+
+    public String getRestartAllowedIds() {
+        return restartAllowedIds;
     }
 }

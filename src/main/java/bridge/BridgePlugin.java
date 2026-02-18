@@ -60,7 +60,8 @@ public final class BridgePlugin extends JavaPlugin {
             return;
         }
 
-        telegramBot = new TelegramBot(token, chatId, this::handleTelegramMessage);
+        String restartAllowedIds = cfg.getRestartAllowedIds().trim();
+        telegramBot = new TelegramBot(token, chatId, restartAllowedIds, this::handleTelegramMessage);
 
         botsApplication = new TelegramBotsLongPollingApplication();
         try {
