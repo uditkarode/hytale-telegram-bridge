@@ -34,6 +34,3 @@ Telegram commands:
 1. `/experimental_server_restart` stops the server from Telegram.
 2. `/players` replies with the current player list.
 3. `/tgreply <id>` opens the reply context page (used by the in-game `[reply]` link).
-
-Reply notes:
-- When a Telegram message is a reply, in-game chat adds a `[reply]` tag that opens the original message context.
