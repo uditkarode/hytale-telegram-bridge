@@ -121,7 +121,7 @@ public final class BridgePlugin extends JavaPlugin {
         String text = message.text();
         if (message.type() == TelegramMessageType.TEXT && (text == null || text.isEmpty())) return;
 
-        if (message.type() == TelegramMessageType.TEXT && text.equals("/players")) {
+        if (message.type() == TelegramMessageType.TEXT && stripBotSuffix(text).equals("/players")) {
             sendPlayersList();
             return;
         }
@@ -176,6 +176,11 @@ public final class BridgePlugin extends JavaPlugin {
             universe.sendMessage(Message.join(prefix, body));
         }
         getLogger().at(Level.INFO).log("Broadcasted Telegram message to Hytale: " + logText);
+    }
+
+    private static String stripBotSuffix(String text) {
+        int at = text.indexOf('@');
+        return at > 0 ? text.substring(0, at) : text;
     }
 
     private void sendPlayersList() {

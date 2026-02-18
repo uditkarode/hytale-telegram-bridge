@@ -44,7 +44,7 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
         if (type == TelegramMessageType.TEXT && (text == null || text.isEmpty())) return;
         if (chatId == null || !String.valueOf(message.getChatId()).equals(chatId)) return;
 
-        if (type == TelegramMessageType.TEXT && text.equals("/experimental_server_restart")) {
+        if (type == TelegramMessageType.TEXT && stripBotSuffix(text).equals("/experimental_server_restart")) {
             sendMessage("Restarting server...");
             sendMessage("A message will be sent when the server is ready again...");
             CommandManager.get().handleCommand(ConsoleSender.INSTANCE, "stop");
@@ -140,6 +140,11 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
             default:
                 return "";
         }
+    }
+
+    private static String stripBotSuffix(String text) {
+        int at = text.indexOf('@');
+        return at > 0 ? text.substring(0, at) : text;
     }
 
     private static String formatPreview(TelegramMessageType type, String text) {
