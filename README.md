@@ -1,6 +1,6 @@
 # Hytale Telegram Bridge
 
-A simple Hytale server plugin that bridges chat, join/leave events, and deaths to Telegram.
+A simple Hytale server plugin that bridges chat, join/leave events, and deaths to Telegram. Allows viewing replies.
 
 ## Installation
 
