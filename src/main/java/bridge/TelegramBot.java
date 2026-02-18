@@ -49,7 +49,7 @@ public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
         if (type == TelegramMessageType.TEXT && (text == null || text.isEmpty())) return;
         if (chatId == null || !String.valueOf(message.getChatId()).equals(chatId)) return;
 
-        if (type == TelegramMessageType.TEXT && stripBotSuffix(text).equals("/experimental_server_restart")) {
+        if (type == TelegramMessageType.TEXT && stripBotSuffix(text).equals("/server_restart")) {
             if (!restartAllowedIds.isEmpty()) {
                 User sender = message.getFrom();
                 if (sender == null || !restartAllowedIds.contains(sender.getId())) {

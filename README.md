@@ -31,9 +31,9 @@ The plugin auto-creates `mods/bridge_hytale-telegram-bridge/Bridge.json` on firs
 }
 ```
 
-`RestartAllowedIds` is a comma-separated list of Telegram user IDs that are allowed to use `/experimental_server_restart`. If left empty, anyone in the chat can use the command.
+`RestartAllowedIds` is a comma-separated list of Telegram user IDs that are allowed to use `/server_restart`. If left empty, anyone in the chat can use the command.
 
 Telegram commands:
-1. `/experimental_server_restart` **stops** the server from Telegram. To have it restart you should be running with `Restart=always` in systemd or similar.
+1. `/server_restart` **stops** the server from Telegram. To have it restart you should be running with `Restart=always` in systemd or similar.
 2. `/players` replies with the current player list.
 3. `/tgreply <id>` opens the reply context page (used by the in-game `[reply]` link).
